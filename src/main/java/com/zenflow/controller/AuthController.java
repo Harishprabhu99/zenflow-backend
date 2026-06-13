@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtService jwtService;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
@@ -27,7 +28,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         return authService.login(request.getEmail(), request.getPassword())
-                .map(user -> ResponseEntity.ok("dummy-jwt-token")) // TODO: Generate real JWT
+                .map(user -> ResponseEntity.ok(new AuthResponse(jwtService.generateToken(user.getEmail()))))
                 .orElse(ResponseEntity.status(401).body("Invalid credentials"));
     }
 
@@ -42,5 +43,11 @@ public class AuthController {
     public static class LoginRequest {
         private String email;
         private String password;
+    }
+
+    @Data
+    @RequiredArgsConstructor
+    public static class AuthResponse {
+        private final String token;
     }
 }

@@ -2,6 +2,7 @@ package com.zenflow.controller;
 
 import com.zenflow.data.entity.User;
 import com.zenflow.service.AuthService;
+import com.zenflow.service.JwtService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -28,9 +28,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        return authService.login(request.getEmail(), request.getPassword())
-                .map(user -> ResponseEntity.ok(new AuthResponse(jwtService.generateToken(user.getEmail()))))
-                .orElse(ResponseEntity.status(401).body("Invalid credentials"));
+        var userOptional = authService.login(request.getEmail(), request.getPassword());
+        if (userOptional.isPresent()) {
+            String token = jwtService.generateToken(userOptional.get().getEmail());
+            return ResponseEntity.ok(new AuthResponse(token));
+        } else {
+            return ResponseEntity.status(401).body("Invalid credentials");
+        }
     }
 
     @Data
